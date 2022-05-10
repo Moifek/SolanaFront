@@ -1,25 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+} from 'react-router-dom';
 
-function App() {
+import { getPosts } from "./actions/posts";
+
+
+import Dashboard from "./components/LandingPage/DashBoard";
+import NavBarCustom from "./components/NavBar/NavBar.js";
+import Stacking from "./components/Pages/staking/stacking.js";
+import ICO from "./components/Pages/ICO/ICO.js";
+import useStyles from "./styles";
+
+
+const App = () => {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+
+
+  useEffect(() => {
+    dispatch(getPosts());
+  }, [dispatch]);
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+         <NavBarCustom />
+          <Dashboard />
+
+
+          <Routes>
+            <Route path='/' element={Dashboard} />
+            <Route path='/Stacking' element={Stacking} />
+            <Route path='/ICO' element={ICO} />
+          </Routes>
+    </>
+    
   );
-}
+};
 
 export default App;
