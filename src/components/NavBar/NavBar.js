@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   Avatar,
   Tooltip,
@@ -13,7 +13,18 @@ import {
   Box,
   IconButton,
 } from "@material-ui/core";
-
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
+import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
+import {
+  getLedgerWallet,
+  getPhantomWallet,
+  getSlopeWallet,
+  getSolflareWallet,
+  getSolletExtensionWallet,
+  getSolletWallet,
+  getTorusWallet,
+} from '@solana/wallet-adapter-wallets';
+import { clusterApiUrl } from '@solana/web3.js';
 import {
   Link
 } from 'react-router-dom';
@@ -27,6 +38,7 @@ const pages = ["DASHBOARD", "STAKING", "ICO"];
 const urls = ["/", "/Stacking", "/ICO"];
 
 const Navbar = () => {
+  
     const classes = useStyles();
 
     const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -34,6 +46,26 @@ const Navbar = () => {
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
+  };
+  const ConnectWallet = (event) => {
+    const network = WalletAdapterNetwork.Devnet;
+
+    // You can also provide a custom RPC endpoint
+    const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+
+    // @solana/wallet-adapter-wallets includes all the adapters but supports tree shaking --
+    // Only the wallets you configure here will be compiled into your application
+    const wallets = useMemo(() => [
+      getPhantomWallet(),
+      getSlopeWallet(),
+      getSolflareWallet(),
+      getTorusWallet({
+          options: { clientId: 'Get a client ID @ https://developer.tor.us' }
+      }),
+      getLedgerWallet(),
+      getSolletWallet({ network }),
+      getSolletExtensionWallet({ network }),
+    ], [network]);
   };
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -103,7 +135,7 @@ const Navbar = () => {
       </Button>
     ))}
     <Tooltip title="Connect Wallet">
-    <center><Button radius="xl" color="dark" variant="filled" size="xl" className={`${classes.ConnectWalletButton}`}>CONNECT WALLET </Button></center>
+    <center><Button onClick={ConnectWallet} radius="xl" color="dark" variant="filled" size="xl" className={`${classes.ConnectWalletButton}`}>CONNECT WALLET </Button></center>
 
     </Tooltip>
       </div>
